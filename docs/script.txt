@@ -1,0 +1,7 @@
+Hello, and thank you for stopping by our poster. This is a short audio walkthrough of our study. You can follow along with the transcript on this page.
+
+In this work, we investigate how a simple method can improve performance on a well-known benchmark. Our key idea is to combine two existing techniques in a way that has not been explored before.
+
+Our experiments show a consistent improvement over strong baselines, while keeping the computational cost low. Please see the figures on the poster for detailed results.
+
+If you have any questions, feel free to talk to us in person, or contact us by email. Thank you for listening.
