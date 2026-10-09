@@ -1,0 +1,105 @@
+# main に push されたら、必要に応じて音声を作り直し、docs/ を GitHub Pages に公開する。
+#
+# - script.txt / meta.json だけが変わった       → Kokoro で audio.mp3 を作り直す
+# - audio.mp3 だけが変わった（手で mp3 を差し替え）→ meta.json の version だけ更新する
+# - audio.mp3 と meta.json が両方変わった        → PC で tts.py 済みとみなして公開だけ
+# - Actions タブの「Run workflow」               → 必ず作り直す
+#
+# このワークフロー自身の commit（GITHUB_TOKEN）は次のワークフローを起動しないので、ループしない。
+name: publish
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 何をするか判定
+        id: mode
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          mode=none
+          if [ "$EVENT" = "workflow_dispatch" ] || [ -z "$BEFORE" ] || [[ "$BEFORE" =~ ^0+$ ]]; then
+            mode=tts
+          elif ! changed=$(git diff --name-only "$BEFORE" "$GITHUB_SHA"); then
+            mode=tts
+          else
+            has() { grep -qx "$1" <<<"$changed"; }
+            if has docs/audio.mp3; then
+              if has docs/meta.json; then mode=none; else mode=manual; fi
+            elif has docs/script.txt || has docs/meta.json; then
+              mode=tts
+            fi
+          fi
+          echo "mode=$mode" | tee -a "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-python@v5
+        if: steps.mode.outputs.mode != 'none'
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Kokoro モデルのキャッシュ
+        if: steps.mode.outputs.mode == 'tts'
+        uses: actions/cache@v4
+        with:
+          path: tools/models
+          key: kokoro-model-v1.0
+
+      - name: 依存関係とモデルの準備
+        if: steps.mode.outputs.mode == 'tts'
+        run: |
+          pip install -r requirements.txt
+          command -v ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+          base=https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0
+          mkdir -p tools/models
+          for f in kokoro-v1.0.onnx voices-v1.0.bin; do
+            [ -f "tools/models/$f" ] || curl -sSfL -o "tools/models/$f" "$base/$f"
+          done
+
+      - name: 音声を合成
+        if: steps.mode.outputs.mode == 'tts'
+        run: python tools/tts.py
+
+      - name: 手動差し替えの mp3 として meta.json を更新
+        if: steps.mode.outputs.mode == 'manual'
+        run: python tools/tts.py --manual-audio
+
+      - name: 変更を commit
+        if: steps.mode.outputs.mode != 'none'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "chore: 音声を更新（自動）"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - id: deploy
+        uses: actions/deploy-pages@v4

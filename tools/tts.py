@@ -20,9 +20,6 @@ import sys
 import tempfile
 from pathlib import Path
 
-import numpy as np
-import soundfile as sf
-
 ROOT = Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
 MODELS = Path(__file__).resolve().parent / "models"
@@ -65,22 +62,49 @@ def update_meta(meta_path: Path, starts: list[float], duration: float) -> int:
     return meta["version"]
 
 
+def mark_manual_audio(meta_path: Path) -> int:
+    """mp3 を手で差し替えたとき用。version を +1 し、合わなくなった段落の開始秒を消す。"""
+    meta = json.loads(meta_path.read_text(encoding="utf-8")) if meta_path.exists() else {}
+    meta["version"] = int(meta.get("version", 0)) + 1
+    meta.pop("duration", None)
+    meta.pop("segments", None)
+    meta_path.write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return meta["version"]
+
+
 def main() -> None:
+    meta_path = DOCS / "meta.json"
+    meta = json.loads(meta_path.read_text(encoding="utf-8")) if meta_path.exists() else {}
+
+    # 声・話速・言語は meta.json の値を既定にする（ブラウザで meta.json を編集するだけで変えられるように）
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--script", type=Path, default=DOCS / "script.txt")
     parser.add_argument("--out", type=Path, default=DOCS / "audio.mp3")
-    parser.add_argument("--voice", default="af_heart", help="声の名前（--list-voices で一覧）")
-    parser.add_argument("--speed", type=float, default=1.0, help="話速 0.5〜2.0")
-    parser.add_argument("--lang", default="en-us", help="en-us（米）/ en-gb（英）")
+    parser.add_argument("--voice", default=meta.get("voice", "af_heart"), help="声の名前（--list-voices で一覧）")
+    parser.add_argument("--speed", type=float, default=float(meta.get("speed", 1.0)), help="話速 0.5〜2.0")
+    parser.add_argument("--lang", default=meta.get("lang", "en-us"), help="en-us（米）/ en-gb（英）")
     parser.add_argument("--pause", type=float, default=0.6, help="段落間の無音（秒）")
     parser.add_argument("--bitrate", default="80k", help="mp3 のビットレート")
     parser.add_argument("--list-voices", action="store_true")
+    parser.add_argument("--manual-audio", action="store_true", help="合成せず、手で差し替えた mp3 用に meta.json だけ更新する")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", datefmt="%H:%M:%S")
+
+    if args.manual_audio:
+        logger.info("手動差し替えの mp3 として meta.json を更新（version=%d）", mark_manual_audio(meta_path))
+        return
+
+    # 合成に必要なライブラリはここで読み込む（--manual-audio は依存なしで動くように）
+    import numpy as np
+    import soundfile as sf
+
     # phonemizer が段落ごとに出す "words count mismatch" は読み上げに影響しないので抑える
-    logging.getLogger("phonemizer").setLevel(logging.ERROR)
+    # （phonemizer は呼ばれるたびに自分のロガーのレベルを戻すので、ルートのハンドラで落とす）
+    for handler in logging.getLogger().handlers:
+        handler.addFilter(lambda r: not (r.name.startswith("phonemizer") and r.levelno < logging.ERROR))
     kokoro = load_kokoro()
+    logger.info("声=%s 話速=%.2f 言語=%s", args.voice, args.speed, args.lang)
 
     if args.list_voices:
         print("\n".join(sorted(kokoro.get_voices())))
@@ -111,7 +135,7 @@ def main() -> None:
         )
 
     duration = len(audio) / sample_rate
-    version = update_meta(DOCS / "meta.json", starts, duration)
+    version = update_meta(meta_path, starts, duration)
     logger.info("書き出し完了: %s（%.1f秒, version=%d）", args.out, duration, version)
 
 

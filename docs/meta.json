@@ -3,7 +3,10 @@
   "authors": "Your Name, Coauthor Name",
   "affiliation": "Your University",
   "venue": "Conference 2026 — Poster #00",
-  "version": 1,
+  "voice": "af_heart",
+  "speed": 1.0,
+  "lang": "en-us",
+  "version": 4,
   "duration": 39.11,
   "segments": [
     0.0,
