@@ -8,6 +8,8 @@ QR に入っているのは固定の URL だけなので、**音声と原稿は�
 
 ## 差し替え手順
 
+Claude の普通のチャット（claude.ai）で原稿を作る場合は、[CHAT_INSTRUCTIONS.md](CHAT_INSTRUCTIONS.md) をプロジェクトの指示に貼り付けて使う。
+
 ### スマホ・別の PC から（ブラウザだけで完結）
 GitHub で https://github.com/w-udagawa/poster-audio を開いて（スマホは GitHub アプリでも可）:
 
