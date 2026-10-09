@@ -5,5 +5,3 @@ In this work, we investigate how a simple method can improve performance on a we
 Our experiments show a consistent improvement over strong baselines, while keeping the computational cost low. Please see the figures on the poster for detailed results.
 
 If you have any questions, feel free to talk to us in person, or contact us by email. Thank you for listening.
-
-This paragraph was added from the browser to test the automatic update.
