@@ -1,7 +1,25 @@
-Hello, and thank you for stopping by our poster. This is a short audio walkthrough of our study. You can follow along with the transcript on this page.
+Hello, my name is Wakuto Udagawa from Tokyu Construction in Japan. Today, I will introduce our study of environmental DNA and the Heike firefly, Aquatica lateralis, in a Japanese wetland. Our starting question was simple. Could we assess the firefly's status before adults begin to fly, rather than waiting for the brief flight season?
 
-In this work, we investigate how a simple method can improve performance on a well-known benchmark. Our key idea is to combine two existing techniques in a way that has not been explored before.
+First, please look at Figure two, which shows the life cycle. Adult fireflies are famous for their light, but eggs, larvae, and pupae can also glow, although the light is often faint. The larvae live in water, feed mainly on freshwater snails, and become less active in winter. In early summer, mature larvae leave the water, pupate on land, and later emerge as flying adults that reproduce.
 
-Our experiments show a consistent improvement over strong baselines, while keeping the computational cost low. Please see the figures on the poster for detailed results.
+We have counted flying adults since 2017 in a wetland of about three hundred square meters in Yokohama, Japan. The wetland was created in a small valley, known locally as a yato. Adult surveys provide useful information, but only during a limited part of the year. For conservation management, we wanted a way to track the fireflies before the adult flight season.
 
-If you have any questions, feel free to talk to us in person, or contact us by email. Thank you for listening.
+In 2022, we began analyzing environmental DNA in wetland water and comparing DNA concentrations with adult counts. But we faced a problem of interpretation. Much of the DNA in water could come from aquatic larvae, rather than the flying adults we were counting. So, in 2024, we added nighttime surveys of glowing larvae, recording both their numbers and their locations.
+
+Please look at Figure one for the study site. Sites one and two are downstream, in open water, while sites three and four are upstream, along a narrow flowing channel. At each site, we filtered about one liter of water and performed species-specific DNA analysis. We also surveyed glowing aquatic larvae and flying adults after sunset along a fixed route.
+
+Before discussing the results, there is an important limitation. Environmental DNA can travel with water, and DNA release and degradation can vary with environmental conditions and life stage. So, DNA concentration cannot be directly converted into the number of larvae at a particular site. Equally, failure to detect DNA does not prove absence, and visual surveys can miss small larvae that are difficult to find.
+
+Now, please look at Figure three. Across 2024, 2025, and 2026, observed aquatic larvae were concentrated mainly in the upstream area. In May, before the main period when larvae leave the water, DNA concentrations were also highest at upstream sites in all three years. The highest concentration occurred at site three in 2024 and 2026, and at site four in 2025.
+
+Larval locations in Figure three combine multiple survey nights, whereas each May DNA result comes from one sampling day. On May thirtieth, 2024, DNA was detected at site three but not site four. During a nighttime survey after sampling, we found only two aquatic larvae and one larva on land across the wetland. Missed larvae, DNA transport, and detection variability are all possible explanations, but this case cannot distinguish among them.
+
+Environmental conditions may also help explain why larvae were more common upstream. During measurements in May, downstream water temperatures approached thirty degrees Celsius, around five degrees warmer than upstream water. Vegetation and the availability of suitable banks for larvae to leave the water also differed between these areas. These factors are possible explanations, rather than causes established by this study.
+
+Next, please look at Figure six, which compares DNA results across life-cycle periods. Before adults fly, mature larvae leave the water and pupate on land. During adult flight, fewer larvae are therefore expected to remain in the water. In this period, DNA detection was forty percent, the lowest rate observed, and quantifiable concentrations were generally low.
+
+After the flight period, the next generation of larvae develops in the water, and DNA detection reached about ninety-four percent. Detection was seventy-five percent before flight and forty-five percent in winter. These differences suggest that life-cycle timing matters when interpreting DNA measurements. Figure five shows that October DNA concentrations and the following year's adult counts changed in the same direction in three comparisons. However, three comparisons cannot establish a reliable predictive relationship.
+
+Finally, our goal is to improve wetland conservation management. In addition to biological surveys, we monitor water levels, flow using a V-notch weir, and local weather conditions. During the drought in 2025, low autumn DNA concentrations were among the observations considered when we took measures to secure water supply. This is an example of using biological observations alongside environmental monitoring, not evidence that DNA alone can guide management.
+
+To conclude, we found a spatial correspondence between May DNA concentrations and observed larval distribution, as well as variation across life-cycle periods. Our findings suggest that both sampling location and timing matter when evaluating fireflies with environmental DNA. Further validation is needed before DNA concentration can reliably indicate abundance. Thank you for listening. If you have questions, please speak with us or use the contact information on this poster.
